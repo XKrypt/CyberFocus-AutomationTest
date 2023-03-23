@@ -1,7 +1,8 @@
 package org.automation.test;
+
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.*;
-import  org.openqa.selenium.chrome.ChromeDriver;
-import  io.github.bonigarcia.wdm.WebDriverManager;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -19,19 +20,31 @@ public class Main {
         driver.manage().window().maximize();
 
 
-        //sliderScenario(driver);
-        //formScenario(driver);
-        //datePickerScenario(driver);
+        formScenario(driver);
+        waitFor(3000,driver);
         frameScenario(driver);
-
+        waitFor(3000,driver);
+        datePickerScenario(driver);
+        waitFor(3000, driver);
+        sliderScenario(driver);
+        waitFor(3000,driver);
         driver.quit();
     }
 
-    static void waitPageLoad(WebDriver driver){
+
+
+
+    //Funções de auxilio ----------------------------------------------------------------------
+
+    /*
+    * Espera a pagina carregar
+    @param driver WebDriver
+     */
+    static void waitPageLoad(WebDriver driver) {
         new WebDriverWait(driver, Duration.ofSeconds(20)).until(new Function<WebDriver, Boolean>() {
             public Boolean apply(WebDriver driver) {
                 System.out.println("Current Window State : "
-                        + String.valueOf(((JavascriptExecutor) driver).executeScript("return document.readyState")));
+                        + ((JavascriptExecutor) driver).executeScript("return document.readyState"));
                 return String
                         .valueOf(((JavascriptExecutor) driver).executeScript("return document.readyState"))
                         .equals("complete");
@@ -39,21 +52,42 @@ public class Main {
         });
     }
 
-    static void waitFor(int time, WebDriver driver){
+    /*
+    * Espera por time milesimos de segundo
+    @param time milesimos de segundo a esperar.
+    @param driver WebDriver
+     */
+    static void waitFor(int time, WebDriver driver) {
         new Actions(driver).pause(time).perform();
     }
-    static void sliderScenario(WebDriver driver){
+
+
+
+
+    // Cenarios -----------------------------------------------------------------------
+
+
+    /*
+    * Pagina slider
+    @param driver WebDriver
+     */
+
+    static void sliderScenario(WebDriver driver) {
         driver.get("https://demo.automationtesting.in/Slider.html");
         waitPageLoad(driver);
         WebElement slider = driver.findElement(By.id("slider")).findElement(By.tagName("a"));
-        for (int i = 0; i != 50; i++){
+        for (int i = 0; i != 50; i++) {
             slider.sendKeys(Keys.ARROW_RIGHT);
             new Actions(driver).pause(20).perform();
         }
-        waitFor(2000,driver);
     }
 
-    static void frameScenario(WebDriver driver){
+
+    /*
+    * Pagina frame
+    @param driver WebDriver
+     */
+    static void frameScenario(WebDriver driver) {
         driver.get("https://demo.automationtesting.in/Frames.html");
         waitPageLoad(driver);
 
@@ -62,46 +96,60 @@ public class Main {
         driver.switchTo().frame(iframe);
 
         driver.findElement(By.tagName("input")).sendKeys("Palmeiras não tem mundial");
-        waitFor(2000,driver);
     }
 
-    static void datePickerSceneario(WebDriver driver){
+
+    /*
+    * Pagina datapicker
+    @param driver WebDriver
+     */
+    static void datePickerScenario(WebDriver driver) {
         driver.get("https://demo.automationtesting.in/Datepicker.html");
         waitPageLoad(driver);
-        driver.findElement(By.id("datepicker2")).sendKeys("15/08/1999");
-        waitFor(100, driver);
-       WebElement datePicker1 = driver.findElement(By.id("datepicker1"));
-       datePicker1.click();
-       WebElement prev = driver.findElement(By.cssSelector("a[data-handler=prev]"));
-       WebElement monthText = driver.findElement(By.className("ui-datepicker-month"));
-        WebElement yearText = driver.findElement(By.className("ui-datepicker-month"));
+
+
+       WebElement datePicker2 = driver.findElement(By.id("datepicker2"));
+       datePicker2.sendKeys("08/15/1999");
+
+
+
+        WebElement datePicker1 = driver.findElement(By.id("datepicker1"));
+        datePicker1.click();
+        WebElement prev = driver.findElement(By.cssSelector("a[data-handler=prev]"));
+        WebElement monthText = driver.findElement(By.className("ui-datepicker-month"));
+        WebElement yearText = driver.findElement(By.className("ui-datepicker-year"));
         waitFor(200, driver);
-        while(!monthText.getText().equals("August") && !yearText.getText().equals("1999")){
+        while (!monthText.getText().equals("August") || !yearText.getText().equals("1999")) {
             prev.click();
-            waitFor(5,driver);
-             monthText = driver.findElement(By.className("ui-datepicker-month"));
-             yearText = driver.findElement(By.className("ui-datepicker-month"));
-             prev = driver.findElement(By.cssSelector("a[data-handler=prev]"));
+            monthText = driver.findElement(By.className("ui-datepicker-month"));
+            yearText = driver.findElement(By.className("ui-datepicker-year"));
+            prev = driver.findElement(By.cssSelector("a[data-handler=prev]"));
 
 
         }
 
         driver.findElement(By.className("ui-datepicker-calendar")).findElement(By.linkText("15")).click();
-        waitFor(5000, driver);
+
     }
-    static void formScenario(WebDriver driver){
+
+
+    /*
+    * Pagina register
+    @param driver WebDriver
+     */
+    static void formScenario(WebDriver driver) {
         driver.get("https://demo.automationtesting.in/Register.html");
         waitPageLoad(driver);
 
         //Inputs
-        WebElement firstName =  driver.findElement(By.cssSelector("input[ng-model=FirstName]"));
-        WebElement lastName =  driver.findElement(By.cssSelector("input[ng-model=LastName]"));
-        WebElement address =  driver.findElement(By.cssSelector("textarea[ng-model=Adress]"));
-        WebElement email =  driver.findElement(By.cssSelector("input[ng-model=EmailAdress]"));
-        WebElement gender =  driver.findElement(By.cssSelector("input[value=Male]"));
-        WebElement phone =  driver.findElement(By.cssSelector("input[ng-model=Phone]"));
-        WebElement password =  driver.findElement(By.id("firstpassword"));
-        WebElement confirmPassword =  driver.findElement(By.id("secondpassword"));
+        WebElement firstName = driver.findElement(By.cssSelector("input[ng-model=FirstName]"));
+        WebElement lastName = driver.findElement(By.cssSelector("input[ng-model=LastName]"));
+        WebElement address = driver.findElement(By.cssSelector("textarea[ng-model=Adress]"));
+        WebElement email = driver.findElement(By.cssSelector("input[ng-model=EmailAdress]"));
+        WebElement gender = driver.findElement(By.cssSelector("input[value=Male]"));
+        WebElement phone = driver.findElement(By.cssSelector("input[ng-model=Phone]"));
+        WebElement password = driver.findElement(By.id("firstpassword"));
+        WebElement confirmPassword = driver.findElement(By.id("secondpassword"));
 
 
         //Selects
@@ -121,92 +169,91 @@ public class Main {
         Select selectDay = new Select(selectDayElement);
 
         WebElement selectCountryContained = driver.findElement(By.className("selection"));
-        WebElement language =  driver.findElement(By.id("msdd"));
+        WebElement language = driver.findElement(By.id("msdd"));
 
         //Campos de texto
         firstName.sendKeys("Raphael");
-        waitFor(100,driver);
+        waitFor(100, driver);
         lastName.sendKeys("Oliveira Gonçalves");
-        waitFor(100,driver);
+        waitFor(100, driver);
         address.sendKeys("Rua das covinhas, Praia Grande, Brasil, São Paulo, 197");
-        waitFor(100,driver);
+        waitFor(100, driver);
         email.sendKeys("Email@gmail.com");
-        waitFor(100,driver);
+        waitFor(100, driver);
         phone.sendKeys("1234567890");
-        waitFor(100,driver);
+        waitFor(100, driver);
 
         //Options e Checkboxes
         gender.click();
-        waitFor(100,driver);
+        waitFor(100, driver);
         driver.findElement(By.id("checkbox1")).click();
-        waitFor(100,driver);
+        waitFor(100, driver);
         driver.findElement(By.id("checkbox2")).click();
-        waitFor(100,driver);
+        waitFor(100, driver);
         driver.findElement(By.id("checkbox3")).click();
-        waitFor(100,driver);
-
+        waitFor(100, driver);
 
 
         //Opções de linguagem
         language.click();
-        waitFor(100,driver);
+        waitFor(100, driver);
         List<WebElement> languageOptions = driver.findElements(By.cssSelector("li[list-select]"));
 
-        for (int i = 0; i < languageOptions.size(); i++){
+        for (int i = 0; i < languageOptions.size(); i++) {
             WebElement option = languageOptions.get(i);
             try {
-                if (option.findElement(By.linkText("Portuguese")) != null){
+                if (option.findElement(By.linkText("Portuguese")) != null) {
                     option.click();
                     break;
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
 
             }
 
         }
 
 
-        waitFor(100,driver);
+        waitFor(100, driver);
 
 
         //Selects
         selectSkills.selectByVisibleText("C++");
-        waitFor(100,driver);
+        waitFor(100, driver);
 
         //Selecionar país (Não utiliza a tag select )
         selectCountryContained.click();
-        waitFor(100,driver);
+        waitFor(100, driver);
         List<WebElement> countryContainerOptions = driver.findElement(By.className("select2-results")).findElements(By.tagName("li"));
 
-        for (int i = 0; i< countryContainerOptions.size(); i++){
+        for (int i = 0; i < countryContainerOptions.size(); i++) {
             WebElement option = countryContainerOptions.get(i);
-            if (option.getText().equals("Australia")){
+            if (option.getText().equals("Australia")) {
                 option.click();
                 break;
             }
         }
-        waitFor(100,driver);
+        waitFor(100, driver);
 
 
         //Selecionar país (Utiliza a tag select, mas não possui opções)
         selectCountry.selectByVisibleText("Select Country");
-        waitFor(100,driver);
+        waitFor(100, driver);
 
         //Data de nascimento
         selectYear.selectByVisibleText("1999");
-        waitFor(100,driver);
+        waitFor(100, driver);
         selectMonth.selectByVisibleText("August");
-        waitFor(100,driver);
+        waitFor(100, driver);
         selectDay.selectByVisibleText("15");
-        waitFor(100,driver);
+        waitFor(100, driver);
 
 
         //Senha
         password.sendKeys("Abc1234");
-        waitFor(100,driver);
+        waitFor(100, driver);
         confirmPassword.sendKeys("Abc1234");
-        waitFor(100,driver);
+        waitFor(100, driver);
         driver.findElement(By.id("submitbtn")).click();
-        waitFor(3000,driver);
+
     }
 }
