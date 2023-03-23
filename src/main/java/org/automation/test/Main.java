@@ -19,8 +19,9 @@ public class Main {
         driver.manage().window().maximize();
 
 
-        sliderScenario(driver);
-        formScenario(driver);
+        //sliderScenario(driver);
+        //formScenario(driver);
+        //datePickerScenario(driver);
 
         driver.quit();
     }
@@ -49,6 +50,31 @@ public class Main {
             new Actions(driver).pause(20).perform();
         }
         waitFor(2000,driver);
+    }
+
+    static void datePickerScenario(WebDriver driver){
+        driver.get("https://demo.automationtesting.in/Datepicker.html");
+        waitPageLoad(driver);
+        driver.findElement(By.id("datepicker2")).sendKeys("15/08/1999");
+        waitFor(100, driver);
+       WebElement datePicker1 = driver.findElement(By.id("datepicker1"));
+       datePicker1.click();
+       WebElement prev = driver.findElement(By.cssSelector("a[data-handler=prev]"));
+       WebElement monthText = driver.findElement(By.className("ui-datepicker-month"));
+        WebElement yearText = driver.findElement(By.className("ui-datepicker-month"));
+        waitFor(200, driver);
+        while(!monthText.getText().equals("August") && !yearText.getText().equals("1999")){
+            prev.click();
+            waitFor(5,driver);
+             monthText = driver.findElement(By.className("ui-datepicker-month"));
+             yearText = driver.findElement(By.className("ui-datepicker-month"));
+             prev = driver.findElement(By.cssSelector("a[data-handler=prev]"));
+
+
+        }
+
+        driver.findElement(By.className("ui-datepicker-calendar")).findElement(By.linkText("15")).click();
+        waitFor(5000, driver);
     }
     static void formScenario(WebDriver driver){
         driver.get("https://demo.automationtesting.in/Register.html");
@@ -137,7 +163,15 @@ public class Main {
         //Selecionar país (Não utiliza a tag select )
         selectCountryContained.click();
         waitFor(100,driver);
-        driver.findElement(By.className("select2-results")).findElements(By.tagName("li")).get(1).click();
+        List<WebElement> countryContainerOptions = driver.findElement(By.className("select2-results")).findElements(By.tagName("li"));
+
+        for (int i = 0; i< countryContainerOptions.size(); i++){
+            WebElement option = countryContainerOptions.get(i);
+            if (option.getText().equals("Australia")){
+                option.click();
+                break;
+            }
+        }
         waitFor(100,driver);
 
 
