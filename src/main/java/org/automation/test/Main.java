@@ -22,6 +22,7 @@ public class Main {
         //sliderScenario(driver);
         //formScenario(driver);
         //datePickerScenario(driver);
+        frameScenario(driver);
 
         driver.quit();
     }
@@ -52,7 +53,19 @@ public class Main {
         waitFor(2000,driver);
     }
 
-    static void datePickerScenario(WebDriver driver){
+    static void frameScenario(WebDriver driver){
+        driver.get("https://demo.automationtesting.in/Frames.html");
+        waitPageLoad(driver);
+
+        WebElement iframe = driver.findElement(By.cssSelector("#Single>iframe"));
+
+        driver.switchTo().frame(iframe);
+
+        driver.findElement(By.tagName("input")).sendKeys("Palmeiras não tem mundial");
+        waitFor(2000,driver);
+    }
+
+    static void datePickerSceneario(WebDriver driver){
         driver.get("https://demo.automationtesting.in/Datepicker.html");
         waitPageLoad(driver);
         driver.findElement(By.id("datepicker2")).sendKeys("15/08/1999");
